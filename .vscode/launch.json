@@ -7,6 +7,12 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "BASE DEBUG",
+      "program": "${file}",
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "protocol": "inspector",
       "name": "Jest Debug",
       "program": "${workspaceRoot}/node_modules/jest/bin/jest",

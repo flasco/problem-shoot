@@ -7,7 +7,6 @@
     "test": "jest --no-cache --forceExit --runInBand --detectOpenHandles"
   },
   "devDependencies": {
-    "jest": "^24.1.0",
-    "promises-aplus-tests": "^2.1.2"
+    "jest": "^24.1.0"
   }
 }

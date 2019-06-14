@@ -18,13 +18,12 @@ var levelOrderBottom = function(root) {
   const stack = [root];
   const resArr = [];
   if (root != null) {
-    let p;
     while (stack.length > 0) {
       const tmpA = [];
       const len = stack.length;
 
       for (let i = 0; i < len; i++) {
-        p = stack.shift();
+        const p = stack.shift();
         if (p == null) continue;
         tmpA.push(p.val);
         if (p.left != null) stack.push(p.left);

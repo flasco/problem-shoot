@@ -22,6 +22,7 @@ var minDepth = function(root) {
     const len = stack.length;
     for (let i = 0; i < len; i++) {
       const p = stack.shift();
+      // 这里要注意的是叶子节点的定义，必须要是没有子节点的节点才算是叶子节点
       if (p.left == null && p.right == null) return minL;
       p.left && stack.push(p.left);
       p.right && stack.push(p.right);

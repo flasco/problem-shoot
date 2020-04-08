@@ -17,24 +17,22 @@
  * @return {ListNode}
  */
 var swapPairs = function (head) {
-  let prev = null;
+  if (head == null || head.next == null) return head;
+  const dummy = { next: head };
+  let prev = dummy;
   let ptr = head;
-  let tmp = head;
-  if (head == null) return head;
-  if (head.next == null) return head;
-  const first = head.next;
-  while (ptr != null) {
-    if (ptr.next == null) break;
+
+  while (ptr != null && ptr.next != null) {
+    let tmp = ptr.next;
 
     // 交换
-    tmp = ptr.next;
     ptr.next = tmp.next;
     tmp.next = ptr;
-    if (prev != null) prev.next = tmp;
+    prev.next = tmp;
 
     prev = ptr;
     ptr = ptr.next; // 下一个
   }
-  return first;
+  return dummy.next;
 };
 // @lc code=end

@@ -13,6 +13,9 @@
  * }
  */
 
+// 最坑的在于判断条件，不能直接用val去比较，
+// 最好是通过内存空间直接判断是否相等
+
 /**
  * @param {ListNode} head
  * @return {ListNode}

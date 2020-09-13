@@ -1,10 +1,10 @@
 const { PositionMap } = require("./constants");
 
 const currentMap = [
-  [0, 1, 0, 0, 1],
+  [0, 1, 1, 0, 1],
+  [1, 1, 0, 1, 1],
+  [0, 1, 1, 0, 1],
   [1, 1, 1, 1, 1],
-  [0, 1, 0, 1, 0],
-  [1, 1, 1, 0, 0],
 ];
 
 let curPtr = [1, 0];

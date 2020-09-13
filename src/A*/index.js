@@ -1,7 +1,7 @@
 const { getMapper, walkOneStep } = require("./mapper");
 const { PLink, PositionMap, delay } = require("./constants");
 
-const SPLIT_FLAG = '~';
+const SPLIT_FLAG = "~";
 class AMap {
   constructor() {
     this.plinkMap = new Map();
@@ -28,7 +28,6 @@ class AMap {
         // F = G + H, 因为 G 均为 1，就直接取 H 就完事了
         const F =
           Math.abs(point[0] - curPoint[0]) + Math.abs(point[1] - curPoint[1]);
-        item.F = F;
         if (F < minF) {
           minF = F;
           index = ind;
@@ -46,12 +45,20 @@ class AMap {
       openList.splice(index, 1);
 
       closeList.push(ptr.point.join(SPLIT_FLAG));
+
+      let isEnd = true;
       ptr.near.forEach((item) => {
         const point = item.point;
         if (!closeList.includes(point.join(SPLIT_FLAG))) {
           openList.push(item);
+          isEnd = false;
         }
       });
+      /**
+       * 如果走到没路了，此路作废，重新把 ptr 指回父级
+       * 防止父级乱窜
+       */
+      if (isEnd) ptr = ptr.parent;
     }
     if (ptr.parent != null) await this.callWalkApi(ptr);
   }
@@ -122,7 +129,7 @@ class AMap {
       arr[x - minX][y - minY] = "x";
     });
 
-    arr[-minX][-minY] = 'S';
+    arr[-minX][-minY] = "S";
 
     console.log("------------");
     arr.forEach((i) => console.log(i.join(" ")));
@@ -140,6 +147,7 @@ class AMap {
       // start work, 深搜
       const curPtr = workList.pop();
       const curPoint = curPtr.point;
+      if (closeList.includes(curPoint.join(SPLIT_FLAG))) continue;
       if (prevPtr != null) {
         // 校验是否还是相邻点，如果不是的话就触发自动寻路
         await this.walkTo(prevPtr, curPtr);
@@ -152,7 +160,7 @@ class AMap {
       const potMap = [
         {
           // 上 左 下 右
-          x: 0,// 1,1 => 0, 1
+          x: 0, // 1,1 => 0, 1
           y: 1,
         },
         {
@@ -174,9 +182,9 @@ class AMap {
           // 如果已经走过的话就不走回去了
           const poi = this.getPLink([curPoint[0] + x, curPoint[1] + y]);
           curPtr.near.push(poi);
-          const key = cur.join(SPLIT_FLAG)
-          if (!fullPoint.includes(key))fullPoint.push(key);
-          
+          const key = cur.join(SPLIT_FLAG);
+          if (!fullPoint.includes(key)) fullPoint.push(key);
+
           if (closeList.includes(key)) return;
           workList.push(poi);
         }

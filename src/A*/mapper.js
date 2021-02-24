@@ -19,15 +19,30 @@ const getMapValue = ([x, y]) => {
 
 const getMapper = () => {
   const arr = [];
-  const leftTop = [curPtr[0] - 1, curPtr[1] + 1];
-  for (let i = 0; i < 3; i++) {
-    arr.push([]);
-    for (let j = 0; j < 3; j++) {
-      const curPtr = [leftTop[0] + j, leftTop[1] - i];
-      const value = getMapValue(curPtr);
-      arr[i].push(value);
-    }
-  }
+  // 上左下右
+  const posMap = [
+    {
+      x: 0,
+      y: 1,
+    },
+    {
+      x: -1,
+      y: 0,
+    },
+    {
+      x: 0,
+      y: -1,
+    },
+    {
+      x: 1,
+      y: 0,
+    },
+  ];
+  posMap.forEach(({ x, y }) => {
+    const ptr = [curPtr[0] + x, curPtr[1] + y];
+    const value = getMapValue(ptr);
+    arr.push(value);
+  });
   return arr;
 };
 
@@ -36,7 +51,7 @@ const walkOneStep = (position) => {
   if (position === PositionMap.Left) curPtr = [curPtr[0] - 1, curPtr[1]];
   if (position === PositionMap.Bottom) curPtr = [curPtr[0], curPtr[1] - 1];
   if (position === PositionMap.Right) curPtr = [curPtr[0] + 1, curPtr[1]];
-  console.log(`------current: ${curPtr.join(", ")}`);
+  // console.log(`------current: ${curPtr.join(", ")}`);
 };
 
 exports.getMapper = getMapper;

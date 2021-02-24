@@ -58,7 +58,7 @@ class AMap {
        * 如果走到没路了，此路作废，重新把 ptr 指回父级
        * 防止父级乱窜
        */
-      if (isEnd) ptr = ptr.parent;
+      if (isEnd && ptr.parent != null) ptr = ptr.parent;
     }
     if (ptr.parent != null) await this.callWalkApi(ptr);
   }
@@ -89,7 +89,7 @@ class AMap {
     }
   }
 
-  drawMap(allPoints, walkedList) {
+  drawMap(allPoints, walkedList, curPtr) {
     if (allPoints.length < 1 && walkedList.length < 1) return;
     let minX = Number.MAX_SAFE_INTEGER;
     let maxX = 0;
@@ -129,7 +129,9 @@ class AMap {
       arr[x - minX][y - minY] = "x";
     });
 
-    arr[-minX][-minY] = "S";
+    const curPoint = curPtr.point;
+    // arr[-minX][-minY] = "O";
+    arr[curPoint[0] - minX][curPoint[1] - minY] = 'R';
 
     console.log("------------");
     arr.forEach((i) => console.log(i.join(" ")));
@@ -143,7 +145,7 @@ class AMap {
     const fullPoint = [];
 
     while (workList.length > 0) {
-      await this.drawMap(fullPoint, closeList);
+      await this.drawMap(fullPoint, closeList, prevPtr);
       // start work, 深搜
       const curPtr = workList.pop();
       const curPoint = curPtr.point;
@@ -176,8 +178,8 @@ class AMap {
           y: 0,
         },
       ];
-      potMap.forEach(({ x, y }) => {
-        if (maper[1 - y][1 + x]) {
+      potMap.forEach(({ x, y }, index) => {
+        if (maper[index]) {
           const cur = [curPoint[0] + x, curPoint[1] + y];
           // 如果已经走过的话就不走回去了
           const poi = this.getPLink([curPoint[0] + x, curPoint[1] + y]);
@@ -190,7 +192,7 @@ class AMap {
         }
       });
     }
-    await this.drawMap(fullPoint, closeList);
+    await this.drawMap(fullPoint, closeList, prevPtr);
   }
 
   getPLink(point) {

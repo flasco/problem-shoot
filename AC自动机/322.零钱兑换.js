@@ -13,7 +13,7 @@
 var coinChange = function (coins, amount) {
   const dp = [0];
   for (let i = 1; i <= amount; i++) {
-    dp[i] = Number.MAX_SAFE_INTEGER;
+    dp[i] = amount + 1; // 永远不可能为amount + 1, 等于正无穷
     // 内层 for 循环在求所有选择的最小值
     for (const coin of coins) {
       // 子问题无解，跳过

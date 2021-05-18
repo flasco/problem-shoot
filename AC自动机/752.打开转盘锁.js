@@ -12,35 +12,38 @@
  */
 var openLock = function (deadends, target) {
   const addOne = (str, i) => {
-    if (str[i] === 9) str[i] = 0;
-    else str[i] += 1;
-    return str;
+    const arr = [...str]
+    arr[i] = str[i] >= 9 ? 0 : ++str[i]
+    return arr.join('')
   };
 
   const subOne = (str, i) => {
-    if (str[i] === 0) str[i] = 9;
-    else str[i] -= 1;
-    return str;
+    const arr = [...str]
+    arr[i] = str[i] <= 0 ? 9 : --str[i]
+    return arr.join('')
   };
 
-  const queue = [[0, 0, 0, 0]];
-  const visited = [...deadends];
+  // 还有一种不用BFS的写法，通过DFS去从target倒推到0000，
+  const queue = ['0000'];
+  const visited = new Set(deadends);
 
   let step = 0;
   while (queue.length) {
     const length = queue.length;
     for (let t = 0; t < length; t++) {
       const cur = queue.shift();
-      const stCur = cur.join("");
 
-      if (visited.includes(stCur)) continue;
-      if (stCur === target) {
+      // 垃圾数组，必须用 Set 去优化 includes 的性能
+      if (visited.has(cur)) continue;
+      if (cur === target) {
         return step;
       }
-      visited.push(stCur);
+      visited.add(cur);
       for (let i = 0; i < 4; i++) {
-        queue.push(addOne([...cur], i));
-        queue.push(subOne([...cur], i));
+        const addNum = addOne([...cur], i);
+        visited.has(addNum) || queue.push(addNum);
+        const subNum = subOne([...cur], i);
+        visited.has(subNum) || queue.push(subNum);
       }
     }
 

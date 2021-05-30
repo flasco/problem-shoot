@@ -14,6 +14,8 @@ var maxProfit = function (prices) {
    * dp[i][k][0] = Math.max(dp[i-1][k][0], dp[i-1][k][1] + prices[i]);
    * dp[i][k][1] = Math.max(dp[i-1][k][1], dp[i-1][k-1][0] - prices[i]);
    * 不限制购买的次数，那么此刻持有的利润就会和上一次未持有的利润挂钩
+   * 本质来说还是穷举，把所有可能的情况都穷举出来
+   * 与贪心最大的区别就是当前的子状况与上一层的子状况相关联，需要综合考虑
    */
   let dp0 = [0, 0];
   let dp1 = [-Number.MAX_VALUE, -Number.MAX_VALUE];

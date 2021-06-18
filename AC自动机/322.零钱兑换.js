@@ -12,18 +12,17 @@
  */
 var coinChange = function (coins, amount) {
   const dp = [0];
+
   for (let i = 1; i <= amount; i++) {
-    dp[i] = amount + 1; // 永远不可能为amount + 1, 等于正无穷
-    // 内层 for 循环在求所有选择的最小值
+    dp[i] = amount + 1; // 设最值
     for (const coin of coins) {
-      // 子问题无解，跳过
-      if (i - coin < 0) continue;
-      dp[i] = Math.min(dp[i], 1 + dp[i - coin]);
+      if (i - coin < 0) continue; // 如果小于0说明不存在这种情况，直接继续
+      dp[i] = Math.min(dp[i - coin] + 1, dp[i]); // 当前 amount 对于每一个硬币的选择，取期间用的最少的
     }
   }
 
-  const res = dp[amount];
-  return res === Number.MAX_SAFE_INTEGER ? -1 : res;
+  return dp[amount] > amount ? -1 : dp[amount];
 };
 // @lc code=end
 
+coinChange([1, 2, 5], 11);

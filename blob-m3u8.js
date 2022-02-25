@@ -37,23 +37,7 @@ $section.innerHTML = `<!doctype html>
     text-align: center;
     font-weight: bold;
   }
-  .m-p-other, .m-p-github {
-    position: fixed;
-    right: 50px;
-    bottom: 70px;
-    background-color: #eff3f6;
-    background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
-    color: #24292e;
-    border: 1px solid rgba(27, 31, 35, .2);
-    border-radius: 3px;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 20px;
-    padding: 6px 12px;
-    z-index: 99;
-  }
+
   .m-p-help {
     position: fixed;
     right: 50px;
@@ -70,12 +54,7 @@ $section.innerHTML = `<!doctype html>
     background-color: #eff3f6;
     background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
   }
-  .m-p-github:hover, .m-p-other:hover, .m-p-help {
-    opacity: 0.9;
-  }
-  .m-p-other {
-    bottom: 30px;
-  }
+
   /*顶部信息录入*/
   .m-p-temp-url {
     padding-top: 50px;
@@ -172,24 +151,6 @@ $section.innerHTML = `<!doctype html>
     cursor: pointer;
     background-color: #DC5350;
   }
-  .m-p-cross, .m-p-final {
-    display: inline-block;
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    font-size: 20px;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-    border: 1px solid #eeeeee;
-    background-color: #3D8AC7;
-    opacity: 1;
-    transition: 0.3s all;
-  }
-  .m-p-final {
-    margin-top: 10px;
-    text-decoration: none;
-  }
   .m-p-force, .m-p-retry {
     position: absolute;
     right: 50px;
@@ -245,12 +206,6 @@ $section.style.position = 'relative';
 $section.style.zIndex = '9999';
 $section.style.backgroundColor = 'white';
 document.body.appendChild($section);
-
-// 加载 vue
-let $vue = document.createElement('script');
-$vue.src = 'https://cdn.bootcss.com/vue/2.6.10/vue.min.js';
-let $mux = document.createElement('script');
-$mux.src = 'https://cdn.jsdelivr.net/npm/mux.js@5.7.0/dist/mux.js';
 
 class Queue {
   #defferedQueue = [];
@@ -652,7 +607,6 @@ $vue.addEventListener('load', () => {
       return {
         url: '', // 在线链接
         tips: 'm3u8 视频在线提取工具', // 顶部提示
-        isGetMP4: false, // 是否转码为 MP4 下载
         durationSecond: 0, // 视频持续时长
         downloading: false, // 是否下载中
         beginTime: '', // 开始下载的时间
@@ -764,7 +718,12 @@ $vue.addEventListener('load', () => {
       },
 
       autoGet() {
-        this.url = 'ansodqwe';
+        const sourceEle = document.querySelector('[type="application/x-mpegURL"]');
+        if (!sourceEle) {
+          alert('m3u8 source url not found');
+        } else {
+          this.url = sourceEle.src;
+        }
       },
       // 获取在线文件
       async getM3U8() {
@@ -790,10 +749,6 @@ $vue.addEventListener('load', () => {
 
         // 提取 ts 视频片段地址
         m3u8Str.split('\n').forEach((item) => {
-          if (this.isGetMP4 && item.toUpperCase().includes('#EXTINF:')) {
-            // 计算视频总时长，设置 mp4 信息时使用
-            this.durationSecond += parseFloat(item.split('#EXTINF:')[1]);
-          }
           if (item.toLowerCase().includes('.ts')) {
             this.workList.push({
               title: this.applyURL(item, this.url),
@@ -857,30 +812,6 @@ $vue.addEventListener('load', () => {
         }
       },
 
-      // 转码为 mp4
-      conversionMp4(data, index, callback) {
-        if (this.isGetMP4) {
-          let transmuxer = new muxjs.mp4.Transmuxer({
-            keepOriginalTimestamps: true,
-            duration: parseInt(this.durationSecond),
-          });
-          transmuxer.on('data', segment => {
-            if (index === 0) {
-              let data = new Uint8Array(segment.initSegment.byteLength + segment.data.byteLength);
-              data.set(segment.initSegment, 0);
-              data.set(segment.data, segment.initSegment.byteLength);
-              callback(data.buffer);
-            } else {
-              callback(segment.data);
-            }
-          });
-          transmuxer.push(new Uint8Array(data));
-          transmuxer.flush();
-        } else {
-          callback(data, index);
-        }
-      },
-
       // 重新下载某个片段
       retry(index) {
         if (this.workList[index].status === workStatus.error) {
@@ -902,15 +833,10 @@ $vue.addEventListener('load', () => {
       // 下载整合后的TS文件
       downloadFile(fileDataList, fileName) {
         this.tips = 'ts 碎片整合中，请留意浏览器下载';
-        let fileBlob = null;
-        let a = document.createElement('a');
-        if (this.isGetMP4) {
-          fileBlob = new Blob(fileDataList, { type: 'video/mp4' }); // 创建一个Blob对象，并设置文件的 MIME 类型
-          a.download = `${fileName}.mp4`;
-        } else {
-          fileBlob = new Blob(fileDataList, { type: 'video/MP2T' }); // 创建一个Blob对象，并设置文件的 MIME 类型
-          a.download = `${fileName}.ts`;
-        }
+        const a = document.createElement('a');
+        
+        const fileBlob = new Blob(fileDataList, { type: 'video/MP2T' }); // 创建一个Blob对象，并设置文件的 MIME 类型
+        a.download = `${fileName}.ts`;
         a.href = URL.createObjectURL(fileBlob);
         a.style.display = 'none';
         document.body.appendChild(a);
@@ -952,6 +878,9 @@ $vue.addEventListener('load', () => {
   });
 });
 
+// 加载 vue
+let $vue = document.createElement('script');
+$vue.src = 'https://cdn.bootcss.com/vue/2.6.10/vue.min.js';
+
 document.body.appendChild($vue);
-document.body.appendChild($mux);
 alert('注入成功，请滚动到页面底部');

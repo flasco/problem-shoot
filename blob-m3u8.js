@@ -207,6 +207,10 @@ $section.style.zIndex = '9999';
 $section.style.backgroundColor = 'white';
 document.body.appendChild($section);
 
+// 加载 vue
+let $vue = document.createElement('script');
+$vue.src = 'https://cdn.bootcss.com/vue/2.6.10/vue.min.js';
+
 class Queue {
   #defferedQueue = [];
   #workingSet = new Set();
@@ -877,10 +881,6 @@ $vue.addEventListener('load', () => {
     },
   });
 });
-
-// 加载 vue
-let $vue = document.createElement('script');
-$vue.src = 'https://cdn.bootcss.com/vue/2.6.10/vue.min.js';
 
 document.body.appendChild($vue);
 alert('注入成功，请滚动到页面底部');

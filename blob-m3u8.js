@@ -722,11 +722,11 @@ $vue.addEventListener('load', () => {
       },
 
       autoGet() {
-        const sourceEle = document.querySelector('[type="application/x-mpegURL"]');
+        const sourceEle = document.querySelector('#video-play_html5_api');
         if (!sourceEle) {
           alert('m3u8 source url not found');
         } else {
-          this.url = sourceEle.src;
+          this.url = sourceEle.dataset.src;
         }
       },
       // 获取在线文件

@@ -209,7 +209,7 @@ document.body.appendChild($section);
 
 // 加载 vue
 let $vue = document.createElement('script');
-$vue.src = 'https://cdn.bootcss.com/vue/2.6.10/vue.min.js';
+$vue.src = 'https://unpkg.com/vue@2.6.14/dist/vue.min.js';
 
 class Queue {
   #defferedQueue = [];

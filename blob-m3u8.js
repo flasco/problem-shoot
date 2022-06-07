@@ -38,7 +38,7 @@ $section.innerHTML = `<!doctype html>
     font-weight: bold;
   }
 
-  .m-p-help {
+  .m-p-down {
     position: fixed;
     right: 50px;
     top: 50px;
@@ -177,7 +177,7 @@ $section.innerHTML = `<!doctype html>
 <section id="m-app" v-cloak>
   <!--顶部操作提示-->
   <section class="m-p-action g-box">{{tips}}</section>
-  <a class="m-p-help" target="_blank" href="https://segmentfault.com/a/1190000021847172">?</a>
+  <a class="m-p-down" target="_blank" @click="scrollEnd">↓</a>
   <!--文件载入-->
   <div class="m-p-temp-url">测试链接：http://1257120875.vod2.myqcloud.com/0ef121cdvodtransgzp1257120875/3055695e5285890780828799271/v.f230.m3u8</div>
   <section class="m-p-input-container">
@@ -658,7 +658,7 @@ $vue.addEventListener('load', () => {
 
     created() {
       window.addEventListener('keyup', this.onKeyup);
-      this.queue = new Queue(6);
+      this.queue = new Queue(5);
       this.queue.work = this.download;
       this.queue.drain = () => {
         const isAllReady = this.workList.every(i => i.status === workStatus.finish);
@@ -728,6 +728,9 @@ $vue.addEventListener('load', () => {
         } else {
           this.url = sourceEle.dataset.src;
         }
+      },
+      scrollEnd() {
+        window.scrollTo({ top: document.body.scrollHeight - 800, behavior: 'auto' });
       },
       // 获取在线文件
       async getM3U8() {

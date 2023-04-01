@@ -7,6 +7,10 @@
     "test": "jest --no-cache --forceExit --runInBand --detectOpenHandles"
   },
   "devDependencies": {
+    "@types/node": "^18.15.5",
     "jest": "^24.5.0"
+  },
+  "dependencies": {
+    "blob": "^0.1.0"
   }
 }
